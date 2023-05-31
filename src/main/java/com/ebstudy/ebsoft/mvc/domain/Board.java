@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +24,18 @@ public class Board {
     private int viewCount;
     private Category category;
     private List<Comment> comment;
-    private List<File> fileList;
 
+    //3개를 따로 받다보니 이 방법 밖에 잘 모르겠다...다른 방법이 있나
+    private MultipartFile firstFile;
+    private MultipartFile secondFile;
+    private MultipartFile thirdFile;
+
+    /*public List<MultipartFile> getFileList(MultipartFile firstFile, MultipartFile secondFile, MultipartFile thirdFile){
+        List<MultipartFile> fileList = new ArrayList<>();
+        fileList.add(firstFile);
+        fileList.add(secondFile);
+        fileList.add(thirdFile);
+        return fileList;
+    }
+*/
 }

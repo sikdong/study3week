@@ -26,7 +26,7 @@
 <body>
 <c:set value="${pageContext.request.contextPath }" var="path"></c:set>
 <h3 class="root">자유 게시판 - 목록</h3>
-<form action="" method="post">
+<form action="">
     <div class="root" style="border : 1px solid black; display: flex">
         <div class="searchBox" style="height: 100%">등록일</div>
         <input type="date" name="startDate" class="searchBox elementHeight">
@@ -44,7 +44,7 @@
             </ul>
         </div>
         <div class="input-group mb-3 searchBox elementHeight" style="width : 600px !important;">
-            <input type="text" name="condition" class="form-control" placeholder="검색어를 입력해 주세요.(제목 + 작성자 + 내용)" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <input type="text" name="keyword" class="form-control" placeholder="검색어를 입력해 주세요.(제목 + 작성자 + 내용)" aria-describedby="button-addon2">
             <button class="btn btn-outline-secondary" type="submit" id="button-addon2">검색</button>
         </div>
     </div>
@@ -79,19 +79,58 @@
 <br><br><br>
 <div style="text-align: center">
     <c:if test="${pageInfo.leftPageNumber != 1}">
-        <a href="">&laquo</a>
+        <c:url value="${path}/board/list" var="firstPageLink">
+            <c:param name="page" value="1"></c:param>
+            <c:param name="startDate" value="${param.startDate}"></c:param>
+            <c:param name="endDate" value="${param.endDate}"></c:param>
+            <c:param name="category" value="${param.category}"></c:param>
+            <c:param name="keyword" value="${param.keyword}"></c:param>
+        </c:url>
+        <a href="${firstPageLink}">&laquo</a>
     </c:if>
-    <a href="">&lt</a>
+    <c:if test="${pageInfo.currentPageNumber > 5}">
+        <c:url value="${path}/board/list" var="prePageLink">
+            <c:param name="page" value="${pageInfo.currentPageNumber - 5}"></c:param>
+            <c:param name="startDate" value="${param.startDate}"></c:param>
+            <c:param name="endDate" value="${param.endDate}"></c:param>
+            <c:param name="category" value="${param.category}"></c:param>
+            <c:param name="keyword" value="${param.keyword}"></c:param>
+        </c:url>
+        <a href="${prePageLink}">&lt</a>
+    </c:if>
     <c:forEach var="pageNumber" begin="${pageInfo.leftPageNumber}" end="${pageInfo.rightPageNumber}">
-        <a href="">${pageNumber}</a>
+        <c:url value="${path}/board/list" var="currentPageLink">
+            <c:param name="page" value="${pageNumber}"></c:param>
+            <c:param name="startDate" value="${param.startDate}"></c:param>
+            <c:param name="endDate" value="${param.endDate}"></c:param>
+            <c:param name="category" value="${param.category}"></c:param>
+            <c:param name="keyword" value="${param.keyword}"></c:param>
+        </c:url>
+        <a href="${currentPageLink}">${pageNumber}</a>
     </c:forEach>
-    <a href="">&gt</a>
     <c:if test="${pageInfo.rightPageNumber < pageInfo.lastPageNumber}">
-        <a href="">&raquo</a>
+        <c:url value="${path}/board/list" var="nextPageLink">
+            <c:param name="page" value="${pageInfo.currentPageNumber + 5}"></c:param>
+            <c:param name="startDate" value="${param.startDate}"></c:param>
+            <c:param name="endDate" value="${param.endDate}"></c:param>
+            <c:param name="category" value="${param.category}"></c:param>
+            <c:param name="keyword" value="${param.keyword}"></c:param>
+        </c:url>
+        <a href="${nextPageLink}">&gt</a>
+    </c:if>
+    <c:if test="${pageInfo.rightPageNumber < pageInfo.lastPageNumber}">
+        <c:url value="${path}/board/list" var="lastPageLink">
+            <c:param name="page" value="${pageInfo.lastPageNumber}"></c:param>
+            <c:param name="startDate" value="${param.startDate}"></c:param>
+            <c:param name="endDate" value="${param.endDate}"></c:param>
+            <c:param name="category" value="${param.category}"></c:param>
+            <c:param name="keyword" value="${param.keyword}"></c:param>
+        </c:url>
+        <a href="${lastPageLink}">&raquo</a>
     </c:if>
 </div>
 <br><br>
-<button onclick="location.href='${path}/boards/write.jsp'" class="btn btn-outline-primary" style="float : right; margin-right : 40px">등록</button>
+<button onclick="location.href='${path}/board/write.jsp'" class="btn btn-outline-primary" style="float : right; margin-right : 40px">등록</button>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 <script>
     function insertValue(element){

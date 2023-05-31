@@ -4,7 +4,8 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ebstudy.ebsoft.mvc.repository.BoardRepository">
-   <resultMap id="board" type="com.ebstudy.ebsoft.mvc.domain.Board">
+   <!-- 게시판 맵 -->
+    <resultMap id="board" type="com.ebstudy.ebsoft.mvc.domain.Board">
        <id property="boardId" column="board_id"></id>
        <result property="title" column="title"></result>
        <result property="writer" column="writer"></result>
@@ -15,45 +16,76 @@
        <association resultMap="categoryMap" property="category"></association>
    </resultMap>
 
+    <!-- 카테고리 맵 -->
     <resultMap id="categoryMap" type="com.ebstudy.ebsoft.mvc.domain.Category">
         <result property="categoryName" column="category_name"></result>
     </resultMap>
 
+    <!-- 검색 조건 쿼리 -->
+    <sql id="search">
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test='startDate != "" and endDate != ""'>
+                b.reg_date BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test='category != ""'>
+                AND c.category_name = #{category}
+            </if>
+            <if test= 'keyword != ""'>
+                AND
+                (writer LIKE '%'||#{keyword}||'%'
+                OR title LIKE '%'||#{keyword}||'%'
+                OR content LIKE '%'||#{keyword}||'%')
+            </if>
+        </trim>
+    </sql>
+
     <select id="getList" parameterType="com.ebstudy.ebsoft.mvc.domain.Search" resultMap="board">
         SELECT
-        b.board_id,
-        b.title,
-        b.writer,
-        b.content,
-        b.reg_date,
-        b.mod_date,
-        b.view_count,
-        c.category_name
-        FROM Board b
+            b.board_id,
+            b.title,
+            b.writer,
+            b.content,
+            b.reg_date,
+            b.mod_date,
+            b.view_count,
+            c.category_name
+        FROM
+            Board b
         LEFT JOIN Category c
         ON b.category_id = c.category_id
-        ORDER BY b.reg_date DESC
-        LIMIT #{offset}, #{recordSize}
+        <include refid="search"/>
+        ORDER BY
+            b.reg_date DESC
+        LIMIT
+            #{offset}, #{recordSize}
     </select>
 
     <select id="get" parameterType="java.lang.Long" resultMap="board">
         SELECT
-        b.board_id,
-        b.title,
-        b.content,
-        b.reg_date,
-        b.mod_date,
-        c.category_name
-        FROM Board b
-        LEFT JOIN Category c
+            b.board_id,
+            b.title,
+            b.content,
+            b.reg_date,
+            b.mod_date,
+            c.category_name
+        FROM
+            Board b
+        LEFT JOIN
+            Category c
         ON b.category_id = c.category_id
-        WHERE b.board_id = #{boardId}
+        WHERE
+            b.board_id = #{boardId}
     </select>
 
     <select id="getListNum" resultType="int">
         SELECT
-        COUNT(title)
-        FROM Board
+            COUNT(title)
+        FROM
+            Board b
+        LEFT JOIN
+            Category c
+        ON b.category_id = c.category_id
+        <include refid="search"/>
     </select>
 
     <select id="getCategoryList" resultMap="categoryMap">
@@ -61,5 +93,23 @@
         category_name
         FROM Category
     </select>
+
+    <insert id="saveBoard" parameterType="com.ebstudy.ebsoft.mvc.domain.Board">
+        INSERT INTO
+        Board(
+            category_id,
+            title,
+            writer,
+            password,
+            content,
+        )
+        value(
+            #{category.category_id},
+            #{title},
+            #{writer},
+            #{password},
+            #{content}
+        )
+    </insert>
 
 </mapper>

@@ -9,8 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 게시판 컨트롤러
@@ -27,12 +31,13 @@ public class BoardController {
             ,@ModelAttribute("pageInfo") PageInfo pageInfo){
         List<Board> boards = service.getList(search, pageInfo);
 
-        int listNum = service.getListNum();
+        int listNum = service.getListNum(search);
         List<Category> categoryList = service.getCategoryList();
         model.addAttribute("boards", boards);
         model.addAttribute("listNum", listNum);
         model.addAttribute("categoryList", categoryList);
     };
+
 
     @GetMapping("{boardId}")
     public Board get(@PathVariable long boardId) {
@@ -40,9 +45,19 @@ public class BoardController {
     };
 
     @PostMapping("save")
-    public void save(Board board) {
+    public String save(@ModelAttribute Board board) {
         service.save(board);
+        return "redirect:/board/list";
     };
+
+    /**
+     * 게시물 등록
+     */
+    @GetMapping("write")
+    public void write(){
+
+    }
+
 
     @PostMapping("update")
     public void update(Board board) {

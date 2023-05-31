@@ -22,7 +22,7 @@ public interface BoardRepository {
      * 게시글 수 카운팅
      * @return 게시글 수
      */
-    int getListNum();
+    int getListNum(Search search);
 
 
     /**
