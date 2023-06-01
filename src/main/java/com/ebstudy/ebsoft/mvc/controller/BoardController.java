@@ -7,6 +7,7 @@ import com.ebstudy.ebsoft.mvc.domain.Search;
 import com.ebstudy.ebsoft.mvc.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,9 +44,11 @@ public class BoardController {
 
 
     @GetMapping("{boardId}")
-    public Board get(@PathVariable long boardId) {
-        return service.get(boardId);
-    };
+    public String get(@PathVariable long boardId, Model model) {
+        Board board = service.get(boardId);
+        model.addAttribute("board", board);
+        return "board/view";
+    }
 
     @PostMapping("save")
     public String save(@ModelAttribute Board board) {

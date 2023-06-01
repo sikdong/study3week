@@ -23,6 +23,7 @@ public class Board {
     private String password;
     private int viewCount;
     private Category category;
+    private List<FileUnit> fileUnits;
     private List<Comment> comment;
 
     // 게시물 등록 시 따로 바인딩 할 카테고리 id 필드(Category 안의 id랑 바인딩 하는 방법을 모르겠음)

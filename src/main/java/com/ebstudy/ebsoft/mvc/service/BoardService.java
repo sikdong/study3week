@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -80,25 +82,46 @@ public class BoardService {
     public Board get(long boardId) {
         return repository.get(boardId);
     }
-    public void save(Board board) {
-        String uploadFolder = "C:\\upload";
-        File folder = new File(uploadFolder, getFolder());
-        if(!folder.exists()){
-            folder.mkdir();
-        }
-        transferToFile(uploadFolder, board.getFirstFile());
-        transferToFile(uploadFolder, board.getSecondFile());
-        transferToFile(uploadFolder, board.getThirdFile());
 
+    /**
+     * 게시물과 파일 저장
+     * @param board 게시물 정보
+     */
+    public void save(Board board) {
         repository.save(board);
+
+        //FIXME : 230601 파일 폴더에 넣고 DB에 넣는 로직 변경해야함
+        String uploadFolder = "C:\\test\\";
+        File folder = new File(uploadFolder, getFolder());
+        String basePath = uploadFolder + getFolder();
+        if(!folder.exists()){
+            folder.mkdirs();
+        }
+
+        //폴더에 저장하고 파일명을 받음
+        String first = transferToFile(basePath, board.getFirstFile());
+        String second = transferToFile(basePath, board.getSecondFile());
+        String third = transferToFile(basePath, board.getThirdFile());
+
+        //DB File 테이블에 insert 하는 메소드
+        if(!first.isBlank()){
+            repository.saveFile(getFolder(), board.getBoardId(), first);
+        }
+        if(!second.isBlank()){
+            repository.saveFile(getFolder(), board.getBoardId(), second);
+        }
+        if(!third.isBlank()){
+            repository.saveFile(getFolder(), board.getBoardId(), third);
+        }
     }
 
     /**
      * 업로드 된 파일 저장하는 메소드
      * @param path 파일 저장하는 경로
      * @param file 업로드 된 파일
+     * @return 파일 명
      */
-    public void transferToFile(String path, MultipartFile file){
+    public String transferToFile(String path, MultipartFile file){
         //파일 null 체크
         if(!file.isEmpty()){
             File saveFile = new File(path, file.getOriginalFilename());
@@ -107,8 +130,9 @@ public class BoardService {
             }catch (Exception e){
                 e.printStackTrace();
             }
+            return file.getOriginalFilename();
         } else {
-            return;
+            return " ";
         }
     }
 
@@ -117,10 +141,9 @@ public class BoardService {
      * @return 년\\월\\일
      */
     public String getFolder() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date(0);
-        String str = sdf.format(date);
-        return str.replace("-", File.separator);
+        LocalDate now = LocalDate.now();
+        String parsedNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return parsedNow.replace("-", File.separator);
     }
     public void update(Board board) {
         repository.update(board);

@@ -14,12 +14,19 @@
        <result property="modDate" column="mod_date"></result>
        <result property="viewCount" column="view_count"></result>
        <association resultMap="categoryMap" property="category"></association>
+       <collection resultMap="fileMap" property="fileUnits"></collection>
    </resultMap>
 
     <!-- 카테고리 맵 -->
     <resultMap id="categoryMap" type="com.ebstudy.ebsoft.mvc.domain.Category">
         <result property="categoryId" column="category_id"></result>
         <result property="categoryName" column="category_name"></result>
+    </resultMap>
+
+    <resultMap id="fileMap" type="com.ebstudy.ebsoft.mvc.domain.File">
+        <result property="fileId" column="file_id"></result>
+        <result property="fileOriginPath" column="file_origin_path"></result>
+        <result property="fileName" column="file_name"></result>
     </resultMap>
 
     <!-- 검색 조건 쿼리 -->
@@ -103,7 +110,8 @@
             Category
     </select>
 
-    <insert id="save" parameterType="com.ebstudy.ebsoft.mvc.domain.Board">
+    <insert id="save" parameterType="com.ebstudy.ebsoft.mvc.domain.Board" useGeneratedKeys="true"
+    keyColumn="board_id" keyProperty="boardId">
         INSERT INTO
         Board(
             category_id,
@@ -121,7 +129,8 @@
         )
     </insert>
 
-    <!--<insert id="saveFile" parameterType="com.ebstudy.ebsoft.mvc.domain.Board">
+    <insert id="saveFile">
+        <if test='fileName != " "'>
         INSERT INTO
         File (
             board_id,
@@ -130,8 +139,10 @@
         )
         VALUES (
             #{boardId},
-            #{
+            #{fileName},
+            #{folder}
         )
-    </insert>-->
+        </if>
+    </insert>
 
 </mapper>

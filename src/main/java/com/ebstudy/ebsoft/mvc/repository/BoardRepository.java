@@ -3,6 +3,7 @@ package com.ebstudy.ebsoft.mvc.repository;
 import com.ebstudy.ebsoft.mvc.domain.Board;
 import com.ebstudy.ebsoft.mvc.domain.Category;
 import com.ebstudy.ebsoft.mvc.domain.Search;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,4 +31,14 @@ public interface BoardRepository {
      * @return 카테고리 전체 목록
      */
     List<Category> getCategoryList();
+
+    /**
+     * 파일 저장
+     * @param folder   파일 경로(년\\월\\일)
+     * @param boardId  게시물 번호
+     * @param fileName 파일 이름
+     */
+    void saveFile(@Param("folder") String folder
+                ,@Param("boardId") Long boardId
+                ,@Param("fileName") String fileName);
 }

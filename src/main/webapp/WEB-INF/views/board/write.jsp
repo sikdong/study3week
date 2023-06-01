@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% request.setCharacterEncoding("UTF-8"); %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,7 +32,7 @@
 </head>
 <body>
 <h3 class="root">게시판 - 등록</h3>
-<form action="" method="post">
+<form action="${paht}/board/save" method="post" enctype="multipart/form-data">
   <div class="root">
     <div class="borderline">
       <div>카테고리 *</div>
@@ -41,14 +41,12 @@
           카테고리 선택
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" onclick="insertValue(this)">JAVA</a></li>
-          <li><a class="dropdown-item" onclick="insertValue(this)">Javascript</a></li>
-          <li><a class="dropdown-item" onclick="insertValue(this)">Database</a></li>
-          <li><a class="dropdown-item" onclick="insertValue(this)">HTML</a></li>
-          <li><a class="dropdown-item" onclick="insertValue(this)">CSS</a></li>
+          <c:forEach var="category" items="${categoryList}">
+            <li><a class="dropdown-item" data-id="${category.categoryId}" onclick="insertValue(this)">${category.categoryName}</a></li>
+          </c:forEach>
         </ul>
       </div>
-      <input required type="hidden" id="categoryInput" name="category">
+      <input required type="hidden" id="categoryInput" name="categoryNum">
     </div>
     <div class="borderline">
       <div>작성자 *</div>
@@ -66,28 +64,30 @@
     </div>
     <div class="borderline">
       <div>내용 *</div>
-      <textarea name="content" required minlength="4" maxlength="1999"></textarea>
+      <textarea class="content" name="content" required minlength="4" maxlength="1999"></textarea>
     </div>
     <div class="borderline">
       <div>파일 첨부</div>
       <div>
-        <input type="file" name="file1">
-        <input type="file" name="file2">
-        <input type="file" name="file3">
+        <input type="file" name="firstFile">
+        <input type="file" name="secondFile">
+        <input type="file" name="thirdFile">
       </div>
     </div>
   </div>
   <div class="root" style="display: flex; margin-top: 100px !important; justify-content: space-between">
-    <button class="button btn btn-outline-secondary" onclick="location.href='/boards/free/list.jsp'">취소</button>
-    <input type="submit" class="button btn btn-outline-secondary enroll" disabled value="등록">
+    <button class="button btn btn-outline-secondary" onclick="location.href='/board/list'">취소</button>
+    <input type="submit" class="button btn btn-outline-secondary enroll" disabled value="등록"></input>
   </div>
 </form>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 <script>
   function insertValue(element){
     document.querySelector("#selectedCategory").innerHTML = element.innerHTML;
-    document.querySelector("#categoryInput").value = element.innerHTML;
+    document.querySelector("#categoryInput").value = element.dataset.id;
   }
+
+  //비밀번호 확인하는 메소드
   function confirmPwd(el){
     let pwd = document.querySelector(".password").value;
     let confirmedPwd = el.value;
@@ -103,21 +103,51 @@
     }
     document.querySelector('#confirmMessage').appendChild(message);
   }
-  function checkPassword(password) {
 
+  function checkPassword(password) {
     if (!/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{4,25}$/.test(password.value)) {
       alert('숫자+영문자+특수문자 조합으로 4자리 이상 사용해야 합니다.');
+      document.querySelector(".password").value="";
       document.querySelector(".password").value.focus();
       return false;
     }
   }
-  const form = document.querySelector('form');
+
+const form = document.querySelector('form');
   form.addEventListener("submit", (event) => {
     if(document.querySelector('input[name="category"]').value ===""){
       event.preventDefault();
       alert('카테고리를 선택해주세요');
     }
   });
+
+  //게시물 등록 메소드
+/*  document.querySelector(".enroll").addEventListener("click", function(){
+    let category = document.querySelector("#categoryInput").value;
+    let writer = document.querySelector('input[name="writer"]').value;
+    let password = document.querySelector('input[name="password"]').value;
+    let title = document.querySelector('input[name="title"]').value;
+    let content = document.querySelector('.content').value;
+    const files = [];
+    document.querySelectorAll('input[name="fileName"]').forEach((e) => {
+      files.push(e.value)
+    });
+    const data = {
+      category,
+      writer,
+      password,
+      title,
+      content,
+      files
+    }
+    fetch("${page}/board/save", {
+      method : "POST",
+      headers : {
+        "Content-Type" : false
+      },
+      body : JSON.stringify(data)
+    })
+  })*/
 </script>
 </body>
 </html>

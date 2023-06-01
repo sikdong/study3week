@@ -1,6 +1,10 @@
 package com.ebstudy.ebsoft.mvc.domain;
 
-public class File {
+import lombok.Data;
+
+@Data
+public class FileUnit {
+    private Long boardId;
     private Long fileId;
     private String fileOriginPath;
     private String fileName;
