@@ -11,11 +11,11 @@ public class PageInfo {
     private Boolean hasNextButton;
     private Integer lastPageNumber;
     private Integer firstPageNumber;
-    private Integer rightPageNumber;
+    private Double rightPageNumber;
     private Integer leftPageNumber;
 
     @Builder
-    public PageInfo(Integer currentPageNumber, Boolean hasPrevButton, Boolean hasNextButton, Integer lastPageNumber, Integer firstPageNumber, Integer rightPageNumber, Integer leftPageNumber) {
+    public PageInfo(Integer currentPageNumber, Boolean hasPrevButton, Boolean hasNextButton, Integer lastPageNumber, Integer firstPageNumber, Double rightPageNumber, Integer leftPageNumber) {
         this.currentPageNumber = currentPageNumber;
         this.hasPrevButton = hasPrevButton;
         this.hasNextButton = hasNextButton;

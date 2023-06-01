@@ -77,6 +77,7 @@
     </tbody>
 </table>
 <br><br><br>
+<%-- 페이지네이션 --%>
 <div style="text-align: center">
     <c:if test="${pageInfo.leftPageNumber != 1}">
         <c:url value="${path}/board/list" var="firstPageLink">
@@ -130,7 +131,7 @@
     </c:if>
 </div>
 <br><br>
-<button onclick="location.href='${path}/board/write.jsp'" class="btn btn-outline-primary" style="float : right; margin-right : 40px">등록</button>
+<button onclick="location.href='${path}/board/write'" class="btn btn-outline-primary" style="float : right; margin-right : 40px">등록</button>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 <script>
     function insertValue(element){

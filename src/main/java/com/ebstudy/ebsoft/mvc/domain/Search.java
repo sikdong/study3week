@@ -9,7 +9,7 @@ public class Search {
 
     private Integer page;         //현재 페이지 번호
     private Integer recordSize;    //페이지당 출력할 데이터 개수
-    private Integer pageLength;     //화면 하단에 출력할 페이지 사이즈
+    private Integer pageLength;
     private String startDate;
     private String endDate;
     private String keyword;             //검색 키워드

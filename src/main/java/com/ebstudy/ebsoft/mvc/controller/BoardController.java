@@ -6,12 +6,14 @@ import com.ebstudy.ebsoft.mvc.domain.PageInfo;
 import com.ebstudy.ebsoft.mvc.domain.Search;
 import com.ebstudy.ebsoft.mvc.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,8 +29,9 @@ public class BoardController {
     private final BoardService service;
 
     @GetMapping("list")
-    public void getList(@ModelAttribute("search") Search search, Model model
-            ,@ModelAttribute("pageInfo") PageInfo pageInfo){
+    public void getList(@ModelAttribute("search") Search search
+                        ,Model model
+                        ,@ModelAttribute("pageInfo") PageInfo pageInfo){
         List<Board> boards = service.getList(search, pageInfo);
 
         int listNum = service.getListNum(search);
@@ -54,8 +57,9 @@ public class BoardController {
      * 게시물 등록
      */
     @GetMapping("write")
-    public void write(){
-
+    public void write(Model model){
+        List<Category> categoryList = service.getCategoryList();
+        model.addAttribute("categoryList",categoryList);
     }
 
 

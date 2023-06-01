@@ -25,6 +25,9 @@ public class Board {
     private Category category;
     private List<Comment> comment;
 
+    // 게시물 등록 시 따로 바인딩 할 카테고리 id 필드(Category 안의 id랑 바인딩 하는 방법을 모르겠음)
+    private int categoryNum;
+
     //3개를 따로 받다보니 이 방법 밖에 잘 모르겠다...다른 방법이 있나
     private MultipartFile firstFile;
     private MultipartFile secondFile;

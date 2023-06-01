@@ -18,14 +18,21 @@
 
     <!-- 카테고리 맵 -->
     <resultMap id="categoryMap" type="com.ebstudy.ebsoft.mvc.domain.Category">
+        <result property="categoryId" column="category_id"></result>
         <result property="categoryName" column="category_name"></result>
     </resultMap>
 
     <!-- 검색 조건 쿼리 -->
     <sql id="search">
         <trim prefix="WHERE" prefixOverrides="AND">
-            <if test='startDate != "" and endDate != ""'>
+            <!--<if test='startDate != "" and endDate != ""'>
                 b.reg_date BETWEEN #{startDate} AND #{endDate}
+            </if>-->
+            <if test = 'startDate != ""'>
+                b.reg_date <![CDATA[>=]]> #{startDate}
+            </if>
+            <if test = 'endDate != ""'>
+                AND b.reg_date <![CDATA[<=]]> #{endDate}
             </if>
             <if test='category != ""'>
                 AND c.category_name = #{category}
@@ -90,26 +97,41 @@
 
     <select id="getCategoryList" resultMap="categoryMap">
         SELECT
-        category_name
-        FROM Category
+            category_id,
+            category_name
+        FROM
+            Category
     </select>
 
-    <insert id="saveBoard" parameterType="com.ebstudy.ebsoft.mvc.domain.Board">
+    <insert id="save" parameterType="com.ebstudy.ebsoft.mvc.domain.Board">
         INSERT INTO
         Board(
             category_id,
             title,
             writer,
             password,
-            content,
+            content
         )
-        value(
-            #{category.category_id},
+        VALUES (
+            #{categoryNum},
             #{title},
             #{writer},
             #{password},
             #{content}
         )
     </insert>
+
+    <!--<insert id="saveFile" parameterType="com.ebstudy.ebsoft.mvc.domain.Board">
+        INSERT INTO
+        File (
+            board_id,
+            file_name,
+            file_origin_path
+        )
+        VALUES (
+            #{boardId},
+            #{
+        )
+    </insert>-->
 
 </mapper>
