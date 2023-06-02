@@ -3,15 +3,22 @@ package com.ebstudy.ebsoft.mvc.service;
 import com.ebstudy.ebsoft.mvc.domain.*;
 import com.ebstudy.ebsoft.mvc.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.text.SimpleDateFormat;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 게시판 서비스
@@ -90,28 +97,31 @@ public class BoardService {
     public void save(Board board) {
         repository.save(board);
 
-        //FIXME : 230601 파일 폴더에 넣고 DB에 넣는 로직 변경해야함
+        //FIXME : 파일 폴더에 넣고 DB에 넣는 로직 변경해야함
         String uploadFolder = "C:\\test\\";
         File folder = new File(uploadFolder, getFolder());
         String basePath = uploadFolder + getFolder();
         if(!folder.exists()){
             folder.mkdirs();
         }
+        MultipartFile firstFile = board.getFirstFile(); // 첫번째 파일
+        MultipartFile secondFile = board.getSecondFile(); // 두번째 파일
+        MultipartFile thirdFile = board.getThirdFile(); // 세번째 파일
 
-        //폴더에 저장하고 파일명을 받음
-        String first = transferToFile(basePath, board.getFirstFile());
-        String second = transferToFile(basePath, board.getSecondFile());
-        String third = transferToFile(basePath, board.getThirdFile());
+        //폴더에 저장하고 uuid가 포함된 파일명을 받음
+        String firstUuidName = transferToFile(basePath, firstFile); // 첫번째 uuid가 포함된 파일명
+        String secondUuidName = transferToFile(basePath, secondFile); // 두번째 uuid가 포함된 파일명
+        String thirdUuidName = transferToFile(basePath, thirdFile); // 세번째 uuid가 포함된 파일명
 
         //DB File 테이블에 insert 하는 메소드
-        if(!first.isBlank()){
-            repository.saveFile(getFolder(), board.getBoardId(), first);
+        if(!firstUuidName.isBlank()){
+            repository.saveFile(getFolder(), board.getBoardId(), firstFile.getOriginalFilename(), firstUuidName);
         }
-        if(!second.isBlank()){
-            repository.saveFile(getFolder(), board.getBoardId(), second);
+        if(!secondUuidName.isBlank()){
+            repository.saveFile(getFolder(), board.getBoardId(), secondFile.getOriginalFilename(), secondUuidName);
         }
-        if(!third.isBlank()){
-            repository.saveFile(getFolder(), board.getBoardId(), third);
+        if(!thirdUuidName.isBlank()){
+            repository.saveFile(getFolder(), board.getBoardId(), thirdFile.getOriginalFilename(), thirdUuidName);
         }
     }
 
@@ -124,13 +134,15 @@ public class BoardService {
     public String transferToFile(String path, MultipartFile file){
         //파일 null 체크
         if(!file.isEmpty()){
-            File saveFile = new File(path, file.getOriginalFilename());
+            UUID uuid = UUID.randomUUID();
+            String savedFileName = uuid.toString() + "_" + file.getOriginalFilename(); //UUID 적용
+            File saveFile = new File(path, savedFileName);
             try {
-                file.transferTo(saveFile);
+                file.transferTo(saveFile); // 파일 저장
             }catch (Exception e){
                 e.printStackTrace();
             }
-            return file.getOriginalFilename();
+            return savedFileName;
         } else {
             return " ";
         }
@@ -167,4 +179,23 @@ public class BoardService {
         return repository.getCategoryList();
     }
 
+    public void fileDownload(String fileUuidName, HttpServletResponse response) throws IOException {
+        //해당 uuid가 포함된 파일명에 맞는 파일 정보 조회
+        FileUnit file = repository.getFile(fileUuidName);
+
+        //서버에 저장된 전체 파일 경로
+        String baseFolder = "C:\\test\\" + file.getFileOriginPath();
+
+        //조회된 파일 정보 중 originalFileName
+        String originalName = file.getFileName();
+
+        byte[] files = FileUtils.readFileToByteArray(new File(baseFolder, fileUuidName));
+        response.setContentType("application/octet-stream");
+        response.setContentLength(files.length);
+        response.setHeader("Content-Disposition", "attachment; fileName=\"" + URLEncoder.encode(originalName, "UTF-8")+"\";");
+
+        response.getOutputStream().write(files);
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
+    }
 }

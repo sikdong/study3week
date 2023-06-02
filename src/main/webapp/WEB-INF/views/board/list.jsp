@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <style>
@@ -67,7 +68,12 @@
     <c:forEach var="boards" items="${boards}">
         <tr>
             <td>${boards.category.categoryName}</td>
-            <td>${boards.title}</td>
+            <td>
+               <c:if test="${not empty boards.fileUnits}">
+                   파일 있음
+               </c:if>
+                <a href="${path}/board/${boards.boardId}">${boards.title}</a>
+            </td>
             <td>${boards.writer}</td>
             <td>${boards.viewCount}</td>
             <td>${boards.regDate}</td>
@@ -77,7 +83,7 @@
     </tbody>
 </table>
 <br><br><br>
-<%-- 페이지네이션 --%>
+<%------------------ 페이지네이션 ------------------%>
 <div style="text-align: center">
     <c:if test="${pageInfo.leftPageNumber != 1}">
         <c:url value="${path}/board/list" var="firstPageLink">

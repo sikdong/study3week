@@ -8,4 +8,5 @@ public class FileUnit {
     private Long fileId;
     private String fileOriginPath;
     private String fileName;
+    private String fileUuidName;
 }

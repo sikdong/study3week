@@ -2,6 +2,7 @@ package com.ebstudy.ebsoft.mvc.repository;
 
 import com.ebstudy.ebsoft.mvc.domain.Board;
 import com.ebstudy.ebsoft.mvc.domain.Category;
+import com.ebstudy.ebsoft.mvc.domain.FileUnit;
 import com.ebstudy.ebsoft.mvc.domain.Search;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -34,11 +35,16 @@ public interface BoardRepository {
 
     /**
      * 파일 저장
+     *
      * @param folder   파일 경로(년\\월\\일)
      * @param boardId  게시물 번호
      * @param fileName 파일 이름
+     * @param fileUuidName uuid가 포함된 파일 명
      */
     void saveFile(@Param("folder") String folder
-                ,@Param("boardId") Long boardId
-                ,@Param("fileName") String fileName);
+                , @Param("boardId") Long boardId
+                , @Param("fileName") String fileName
+                , @Param("fileUuidName") String fileUuidName);
+
+    FileUnit getFile(String fileUuidName);
 }

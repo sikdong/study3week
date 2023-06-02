@@ -121,7 +121,7 @@ const form = document.querySelector('form');
     }
   });
 
-  //게시물 등록 메소드
+  //fetch 이용한 게시물 등록 메소드
 /*  document.querySelector(".enroll").addEventListener("click", function(){
     let category = document.querySelector("#categoryInput").value;
     let writer = document.querySelector('input[name="writer"]').value;
